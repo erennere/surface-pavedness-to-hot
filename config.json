@@ -1,0 +1,74 @@
+{
+  "roots": {
+    "mapillary_final": "D:\\work-heigit\\surface-pavedness-to-hot\\data",
+    "ohsome": "D:\\work-heigit\\surface-pavedness-to-hot\\ohsome\\ohsome-parquet"
+  },
+  "paths": {
+    "hotosm": {
+      "root_dir": "${roots.mapillary_final}/HOTOSM",
+      "download_dir": "${paths.hotosm.root_dir}/hotosm_files",
+      "metadata_dir": "${paths.hotosm.root_dir}/hotosm_resources",
+      "updated_dir": "${paths.hotosm.root_dir}/updated_hotosm_files",
+      "new_countries_dir": "${paths.hotosm.root_dir}/new_countries",
+      "country_stats_file": "${paths.hotosm.root_dir}/country_stats.csv",
+      "comparison_dir": "${paths.hotosm.root_dir}/comparison"
+    },
+    "predictions": {
+      "root_dir": "${roots.mapillary_final}/predictions_osm",
+      "merged_file": "${paths.predictions.root_dir}/merged_predicted_osm.parquet",
+      "final_partitioned_filtered_dir": "${roots.mapillary_final}/final_partitioned_filtered"
+    },
+    "source_osm": {
+      "original_osm_dir": "${roots.ohsome}/103831"
+    }
+  },
+  "get_hot": {
+    "workers": 32,
+    "pattern": "^hotosm_(.*?)_roads_lines_.*",
+    "search_query": "hotosm roads",
+    "hdx_site": "prod",
+    "user_agent": "HeiGIT",
+    "hdx_read_only": true,
+    "cleanup_extensions": [".txt", ".zip"],
+    "country_data_filename": "country_data.json"
+  },
+  "merge_hotosm": {
+    "pattern": "^hotosm_(.*?)_roads_lines_.*",
+    "workers": 4,
+    "memory_gb": 234,
+    "run_parallel": false,
+    "shuffle_inputs": true,
+    "missing_in_hots_filename": "countries_not_in_hots.csv",
+    "missing_in_our_filename": "countries_not_in_our_data.csv",
+    "in_both_filename": "countries_in_both_data.csv"
+  },
+  "create_stats": {
+    "pattern": "^heigit_(.*?)_roadsurface_lines(?:_(\\d+))?",
+    "workers": 8,
+    "input_path_key": "paths.hotosm.new_countries_dir",
+    "output_filename": "new_country_stats.csv"
+  },
+  "compare_hot_our_data": {
+    "country_column": "country",
+    "total_road_length_column": "total_road_length",
+    "output_filenames": {
+      "countries_not_in_hotosm": "countries_not_in_hotosm.csv",
+      "countries_in_hotosm_wo_info": "countries_in_hotosm_wo_info.csv",
+      "countries_wo_info": "countries_wo_info.csv",
+      "countries_without_alpha3": "countries_without_alpha3.csv"
+    }
+  },
+  "other_countries": {
+    "countries": {
+      "TJ": "TJK",
+      "XK": "XKK"
+    },
+    "output_subdir": "new_countries"
+  },
+  "other_countries_usa": {
+    "countries": {
+      "US": "USA"
+    },
+    "output_subdir": "new_countries"
+  }
+}
